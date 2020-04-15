@@ -1,0 +1,33 @@
+﻿@model Labb2Mvc2.ViewModels.ListFilms
+
+@{
+    ViewData["Title"] = "Show Movies";
+}
+
+<h1>Movies</h1>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col"><a asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="Title" asp-route-asc="@(Model.asc ? false : true)">Title</a></th>
+            <th scope="col"> <a asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="Year" asp-route-asc="@(Model.asc ? false : true)">Release year</a></th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        @foreach (var film in Model.Movies)
+        {
+            <tr>
+                <th scope="row">@film.Nr</th>
+                <td><a asp-controller="Home" asp-action="MovieDetails" asp-route-id="@film.FilmID">@film.Title</a></td>
+                <td>@film.ReleaseYear</td>
+            </tr>
+            
+        }
+    </tbody>
+
+
+</table>
+
