@@ -11,8 +11,8 @@
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col"><a asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="Title" asp-route-asc="@(Model.asc ? false : true)">Title</a></th>
-            <th scope="col"> <a asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="Year" asp-route-asc="@(Model.asc ? false : true)">Release year</a></th>
+            <th scope="col"><a asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="Title" asp-route-asc="@(Model.asc ? false : true)" asp-route-currPage="@Model.pagination.currentPage" asp-route-postsPerPage="@Model.pagination.postsPerPage">Title</a></th>
+            <th scope="col"> <a asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="Year" asp-route-asc="@(Model.asc ? false : true)" asp-route-currPage="@Model.pagination.currentPage" asp-route-postsPerPage="@Model.pagination.postsPerPage">Release year</a></th>
         </tr>
     </thead>
     <tbody>
@@ -24,10 +24,147 @@
                 <td><a asp-controller="Home" asp-action="MovieDetails" asp-route-id="@film.FilmID">@film.Title</a></td>
                 <td>@film.ReleaseYear</td>
             </tr>
-            
+
         }
     </tbody>
 
 
 </table>
 
+<nav>
+    <ul class="pagination">
+
+        @if (Model.pagination.firstPage)
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+
+            <li class="page-item active">
+                <span class="page-link">
+                    1
+                    <span class="sr-only">(current)</span>
+                </span>
+            </li>
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage - 1)" asp-route-postsPerPage="@Model.pagination.postsPerPage">Previous</a></li>
+            <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="1" asp-route-postsPerPage="@Model.pagination.postsPerPage">1</a></li>
+        }
+
+        @{
+
+            if (Model.pagination.currentPage <= 4)
+            {
+                for (int x = 2; x < 5; x++)
+                {
+                    if (x == Model.pagination.currentPage)
+                    {
+                        <li class="page-item active">
+                            <span class="page-link">
+                                1
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@x" asp-route-postsPerPage="@Model.pagination.postsPerPage">@x</a></li>
+                    }
+                }
+
+                <li class="page-item">
+                    <span class="page-link">
+                        <span aria-hidden="true">...</span>
+                    </span>
+                </li>
+            }
+
+            else if (Model.pagination.currentPage > 4 && Model.pagination.currentPage < (Model.pagination.lastPage - 4))
+            {
+                <li class="page-item">
+                    <span class="page-link">
+                        <span aria-hidden="true">...</span>
+                    </span>
+                </li>
+
+                <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage - 1)" asp-route-postsPerPage="@Model.pagination.postsPerPage">@(Model.pagination.currentPage - 1)</a></li>
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        @Model.pagination.currentPage
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+
+
+                <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage + 1)" asp-route-postsPerPage="@Model.pagination.postsPerPage">@(Model.pagination.currentPage + 1)</a></li>
+
+                <li class="page-item">
+                    <span class="page-link">
+                        <span aria-hidden="true">...</span>
+                    </span>
+                </li>
+            }
+
+            else
+            {
+                <li class="page-item">
+                    <span class="page-link">
+                        <span aria-hidden="true">...</span>
+                    </span>
+                </li>
+
+                for (int x = Model.pagination.lastPage - 4; x < Model.pagination.lastPage; x++)
+                {
+                    if (x == Model.pagination.currentPage)
+                    {
+                        <li class="page-item active">
+                            <span class="page-link">
+                                @Model.pagination.currentPage
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@x" asp-route-postsPerPage="@Model.pagination.postsPerPage">@x</a></li>
+                    }
+                }
+
+
+            } }
+
+        @if (Model.pagination.lastPage == Model.pagination.currentPage)
+        {
+            <li class="page-item active">
+                <span class="page-link">
+                    @Model.pagination.lastPage
+                    <span class="sr-only">(current)</span>
+                </span>
+            </li>
+
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@Model.pagination.lastPage" asp-route-postsPerPage="@Model.pagination.postsPerPage">@Model.pagination.lastPage</a></li>
+
+            <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage + 1)" asp-route-postsPerPage="@Model.pagination.postsPerPage">Next</a></li>
+        }
+    </ul>
+
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Posts per page
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage)" asp-route-postsPerPage="25">25</a>
+            <a class="dropdown-item" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage)" asp-route-postsPerPage="50">50</a>
+            <a class="dropdown-item" asp-controller="Home" asp-action="ShowMovies" asp-route-columnToSort="@Model.colToSort" asp-route-asc="@(Model.asc)" asp-route-currPage="@(Model.pagination.currentPage)" asp-route-postsPerPage="100">100</a>
+        </div>
+    </div>
+</nav>

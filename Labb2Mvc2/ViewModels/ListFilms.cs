@@ -7,6 +7,8 @@ namespace Labb2Mvc2.ViewModels
 {
     public class ListFilms
     {
+        public Pagination pagination { get; set; } = new Pagination();
+        
         public List<Movie> Movies { get; set; }
 
         public string colToSort { get; set; }

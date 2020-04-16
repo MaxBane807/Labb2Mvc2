@@ -18,11 +18,11 @@ namespace Labb2Mvc2.Repositories
         }
         
         
-        public List<Film> getAllFilms()
+        public IEnumerable<Film> getAllFilms()
         {
             var films = _context.Film.Select(x => new Film { Title = x.Title, ReleaseYear = x.ReleaseYear, FilmId = x.FilmId});
 
-            return films.ToList();
+            return films;
         }
         
         public Film getByID(int id)
@@ -32,6 +32,11 @@ namespace Labb2Mvc2.Repositories
                 .Select(y => new Film { Title = y.Title, Description = y.Description, Language = y.Language, Rating = y.Rating })
                 .FirstOrDefault();
             return film;
+        }
+
+        public int getNrOfFilms()
+        {
+            return _context.Film.Count();
         }
     }
 }

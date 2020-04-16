@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Labb2Mvc2.Models;
 using Labb2Mvc2.Repositories;
 using Labb2Mvc2.ViewModels;
+using Labb2Mvc2.Services;
 
 namespace Labb2Mvc2.Controllers
 {
@@ -27,46 +28,37 @@ namespace Labb2Mvc2.Controllers
             return View();
         }
 
-        public IActionResult ShowMovies(string columnToSort, bool asc)
+        public IActionResult ShowMovies(string columnToSort, bool asc, int currPage,int postsPerPage)
         {
             ListFilms model = new ListFilms();
 
-            model.Movies = _movieRepository.getAllFilms()
-                .Select(x => new ListFilms.Movie { Title = x.Title, ReleaseYear = x.ReleaseYear, FilmID = x.FilmId }).ToList();
+            if (currPage == 0)
+            {
+                currPage = 1;
+                postsPerPage = 50;
+            }
 
-            if (columnToSort == null)
-            {
-                columnToSort = "Title";
-                asc = false;
-            }
+            var query = _movieRepository.getAllFilms()
+                .Select(x => new ListFilms.Movie { Title = x.Title, ReleaseYear = x.ReleaseYear, FilmID = x.FilmId });                
+
+            model.pagination.currentPage = currPage;
             
-            if (columnToSort == "Title")
-            {
-                if (asc) 
-                {
-                    model.Movies = model.Movies.OrderBy(x => x.Title).ToList();
-                }
-                else
-                {
-                    model.Movies = model.Movies.OrderByDescending(x => x.Title).ToList();
-                }
-            }
-            else
-            {
-                if (asc)
-                {
-                    model.Movies = model.Movies.OrderBy(x => x.ReleaseYear).ToList();
-                }
-                else
-                {
-                    model.Movies = model.Movies.OrderByDescending(x => x.ReleaseYear).ToList();
-                }
-            }
+            var sorter = new Sorting();
+
+            model.Movies = sorter.SortFilms(query, columnToSort, asc)
+                .Skip((currPage - 1) * postsPerPage)
+                .Take(postsPerPage)
+                .ToList();
 
             model.asc = asc;
-            
+            model.colToSort = columnToSort;
+
+            double nrOfPosts = _movieRepository.getNrOfFilms();
+            model.pagination.lastPage = (int)Math.Ceiling(nrOfPosts / postsPerPage);
+            model.pagination.postsPerPage = postsPerPage;
+
             int counter = 1;
-            foreach (var m in model.Movies)
+            foreach (ListFilms.Movie m in model.Movies)
             {
                 m.Nr = counter;
                 counter++;

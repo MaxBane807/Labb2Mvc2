@@ -8,8 +8,10 @@ namespace Labb2Mvc2.Repositories
 {
     public interface IMovieRepository
     {
-        public List<Film> getAllFilms();
+        public IEnumerable<Film> getAllFilms();
 
         public Film getByID(int id);
+
+        public int getNrOfFilms();
     }
 }
