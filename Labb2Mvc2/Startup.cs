@@ -29,7 +29,8 @@ namespace Labb2Mvc2
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddTransient<IMovieRepository, MovieRepository>();
+            services.AddScoped<IMovieRepository, MovieRepository>();
+            services.Decorate<IMovieRepository, CashedMovieRepository>();
 
             services.AddControllersWithViews();
         }
